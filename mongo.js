@@ -20,11 +20,6 @@ const personSchema = new mongoose.Schema({
 
 const Person = mongoose.model("Person", personSchema);
 
-const person = new Person({
-  content: "HTML is easy",
-  important: true,
-});
-
 // Si hay 3 argumentos (node mongo.js password), LISTAMOS las entradas
 if (process.argv.length === 3) {
   console.log("phonebook:");
