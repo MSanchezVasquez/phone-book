@@ -30,6 +30,16 @@ app.get("/", (request, response) => {
   response.send("<h1>Agenda Telefónica Backend</h1>");
 });
 
+app.get("/info", (request, response) => {
+  const currentDate = new Date();
+
+  Person.countDocuments({}).then((count) => {
+    response.send(`
+      <p>Phonebook has info for ${count} people</p>
+      <p>${currentDate}</p>`);
+  });
+});
+
 app.get("/api/persons", (request, response) => {
   Person.find({}).then((persons) => {
     response.json(persons);
@@ -70,14 +80,27 @@ app.post("/api/persons", (request, response, next) => {
     .catch((error) => next(error));
 });
 
-app.get("/info", (request, response) => {
-  const currentDate = new Date();
+app.put("/api/persons/:id", (request, response, next) => {
+  const { name, number } = request.body;
 
-  Person.countDocuments({}).then((count) => {
-    response.send(`
-      <p>Phonebook has info for ${count} people</p>
-      <p>${currentDate}</p>`);
-  });
+  const person = {
+    name: name,
+    number: number,
+  };
+
+  Person.findByIdAndUpdate(request.params.id, person, {
+    new: true,
+    runValidators: true,
+    context: "query",
+  })
+    .then((updatePerson) => {
+      if (updatePerson) {
+        response.json(updatePerson);
+      } else {
+        response.status(404).end();
+      }
+    })
+    .catch((error) => next(error));
 });
 
 app.delete("/api/persons/:id", (request, response, next) => {
