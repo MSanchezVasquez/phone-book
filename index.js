@@ -61,22 +61,22 @@ app.post("/api/persons", (request, response) => {
   });
 });
 
+app.get("/info", (request, response) => {
+  const currentDate = new Date();
+
+  Person.countDocuments({}).then((count) => {
+    response.send(`
+      <p>Phonebook has info for ${count} people</p>
+      <p>${currentDate}</p>`);
+  });
+});
+
 app.delete("/api/persons/:id", (request, response) => {
   Person.findByIdAndDelete(request.params.id)
     .then((result) => {
       response.status(204).end();
     })
     .catch((error) => console.log(error));
-});
-
-app.get("/info", (request, response) => {
-  const currentDate = new Date();
-
-  Person.countDocuments({}).then((count) => {
-    response.send(`
-        <p>Phonebook has info for ${count} people</p>
-        <p>${currentDate}</p>`);
-  });
 });
 
 const PORT = process.env.PORT || 3001;
